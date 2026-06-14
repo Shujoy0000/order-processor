@@ -15,7 +15,7 @@ MAPPING = {
     "রসায়ন রহস্য": "RASHAYON RAHOSSHO",
     "অদ্ভুত মাপজোখ": "ODVUT MAPJOKH",
     "ট্যানগ্রাম": "MAGNETIC TANGRAM",
-    "CLASS FIVE Kit": "CLASS FIVE Kit",
+    "পঞ্চম শ্রেণি": "CLASS FIVE Kit",
     "ফোকাস চ্যালেঞ্জ কিট": "FOCUS CHALLENGE- BANGLA VERSION",
     "মজার পেরিস্কোপ": "MOJAR PERISCOPE",
     "Mystery of Chemistry": "MYSTERY OF CHEMISTRY",
