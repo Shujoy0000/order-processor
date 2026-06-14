@@ -1,13 +1,24 @@
 import streamlit as st
 import pandas as pd
 import io
+import os
 
-st.set_page_config(page_title="Bigganbaksho Order Processor", layout="wide")
+st.set_page_config(page_title="Bigganbaksho Order Converter", layout="wide", page_icon="🚀")
 
-st.title("📦 Bigganbaksho Order Converter (Final Updated)")
-st.markdown("নতুন প্রোডাক্ট ম্যাপিং এবং ফোন নম্বর ফিক্সসহ আপডেট করা হয়েছে।")
+# বিজ্ঞানবাক্স লোগো এবং টাইটেল
+col1, col2 = st.columns([1, 6])
+with col1:
+    # যদি logo.png ফোল্ডারে থাকে তবে দেখাবে, নয়তো টেক্সট দেখাবে
+    if os.path.exists("logo.png"):
+        st.image("logo.png", width=120)
+with col2:
+    st.title("Bigganbaksho Order Converter (Web App Developed By-Shujoy Shaha)")
 
-# ১. আপনার দেওয়া সর্বশেষ প্রোডাক্ট ম্যাপিং ডিকশনারি
+# আপনার দেওয়া স্লোগান ও সাবটাইটেল
+st.markdown("### ম্যানুয়েল কাজের দিন শেষ, বিজ্ঞানবাক্সে বাংলাদেশ")
+st.write("অন্যরকম বাংলাদেশের স্বপ্ন নিয়ে")
+
+# ১. প্রোডাক্ট ম্যাপিং ডিকশনারি
 MAPPING = {
     "আলোর ঝলক": "ALOR JHALAK",
     "চুম্বকের চমক": "CHUMBAKER CHAMAK",
@@ -34,12 +45,13 @@ MAPPING = {
 def clean_phone(phone):
     if not phone: return ""
     p = str(phone).strip()
-    if p.endswith('.0'): p = p[:-2] # .0 রিমুভ করা
-    if p.startswith('880'): p = '0' + p[3:] # 880 সরালে ০ থাকবে না তাই অ্যাডজাস্ট করা
+    if p.endswith('.0'): p = p[:-2]
+    if p.startswith('880'): p = '0' + p[3:]
     if p.startswith('+880'): p = '0' + p[4:]
-    if not p.startswith('0') and len(p) > 5: p = '0' + p # শুরুতে ০ না থাকলে যোগ করা
+    if not p.startswith('0') and len(p) > 5: p = '0' + p
     return p
 
+# ফাইল আপলোড সেকশন
 uploaded_file = st.file_uploader("ওয়েবসাইটের এক্সেল ফাইলটি আপলোড করুন", type=['xlsx', 'csv'])
 
 if uploaded_file:
@@ -50,14 +62,13 @@ if uploaded_file:
             df = pd.read_excel(uploaded_file, dtype={'Phone (Billing)': str, 'Order Number': str})
         
         df = df.fillna("")
-
         grouped = df.groupby('Order Number', sort=False)
         final_data = []
         
         for order_id, group in grouped:
             first_row = group.iloc[0]
             
-            # নাম এবং ফোন নম্বর প্রসেসিং
+            # নাম ও ফোন প্রসেসিং
             first_n = str(first_row.get('First Name (Billing)', '')).strip()
             last_n = str(first_row.get('Last Name (Billing)', '')).strip()
             full_name = f"{first_n} {last_n}".strip()
@@ -84,7 +95,6 @@ if uploaded_file:
                 raw_name = str(item.get('Item Name', '')).replace('- additional', '').strip()
                 qty = item.get('Quantity (- Refund)', 0)
 
-                # ব্রেইন ডেভেলপমেন্ট প্যাকেজ হলে ৩টি প্রোডাক্টে ভাগ হবে
                 if raw_name == "ব্রেইন ডেভেলপমেন্ট প্যাকেজ":
                     bundle = ["MAGNETIC TANGRAM", "FOCUS CHALLENGE- BANGLA VERSION", "Brain Booster"]
                     for b_name in bundle:
@@ -130,19 +140,16 @@ if uploaded_file:
         st.success(f"সফলভাবে {len(result_df)} টি অর্ডার প্রসেস করা হয়েছে!")
         st.dataframe(result_df)
 
-        # এক্সেল ডাউনলোড এবং ফরম্যাটিং
         output = io.BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             result_df.to_excel(writer, index=False, sheet_name='Orders')
             workbook  = writer.book
             worksheet = writer.sheets['Orders']
-            
-            # Contact Number কলাম (B) টেক্সট হিসেবে লক করা
             text_format = workbook.add_format({'num_format': '@'})
             worksheet.set_column('B:B', 20, text_format)
 
         st.download_button(label="গুগল শীট ফাইল ডাউনলোড করুন", data=output.getvalue(), 
-                           file_name="Bigganbaksho_Google_Sheet_Orders.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                           file_name="Bigganbaksho_Final_Orders.xlsx", mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
         
     except Exception as e:
         st.error(f"Error: {e}")
