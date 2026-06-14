@@ -6,27 +6,23 @@ import os
 # পেজ সেটিংস
 st.set_page_config(page_title="Bigganbaksho Order Converter", layout="wide", page_icon="🚀")
 
-# CSS দিয়ে স্টাইল ঠিক করা
+# কাস্টম CSS (লোগো বামে এবং টেক্সট সেন্টারে বড় করে)
 st.markdown("""
     <style>
-    .main-title { text-align: center; color: #FF6600; font-size: 45px; font-weight: bold; margin-bottom: 0px; }
-    .developer-text { text-align: center; font-style: italic; font-size: 16px; color: #555; margin-top: 0px; }
-    .slogan-text { text-align: center; font-size: 28px; font-weight: bold; color: #333; margin-top: 20px; }
-    .vision-text { text-align: center; font-size: 18px; color: #666; margin-bottom: 30px; }
+    .main-title { text-align: center; color: #FF6600; font-size: 55px; font-weight: bold; margin-bottom: 5px; margin-top: -60px; }
+    .developer-text { text-align: center; font-style: italic; font-size: 18px; color: #555; margin-top: 0px; }
+    .slogan-text { text-align: center; font-size: 30px; font-weight: bold; color: #333; margin-top: 25px; }
+    .vision-text { text-align: center; font-size: 20px; color: #666; margin-bottom: 30px; }
     .upload-label { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-# লোগো প্রদর্শন (আপনার আপলোড করা ফাইলের নাম এখানে যোগ করা হয়েছে)
-col1, col2, col3 = st.columns([2, 1, 2])
-with col2:
-    logo_files = ["logo.png", "logo.jpg", "logo.jpeg", "images (1).jpeg", "Logo.png"]
-    found_logo = False
-    for f in logo_files:
-        if os.path.exists(f):
-            st.image(f, width=150)
-            found_logo = True
-            break
+# লোগো প্রদর্শন (একদম উপরে বামে)
+logo_files = ["logo.png", "logo.jpg", "logo.jpeg", "images (1).jpeg", "Logo.png"]
+for f in logo_files:
+    if os.path.exists(f):
+        st.image(f, width=130)
+        break
 
 # টেক্সট অংশ
 st.markdown('<p class="main-title">Bigganbaksho Order Converter</p>', unsafe_allow_html=True)
@@ -59,6 +55,7 @@ MAPPING = {
     "Power Of Personality": "Power Of Personality"
 }
 
+# ফোন নম্বর ঠিক করার ফাংশন
 def clean_phone(phone):
     if not phone: return ""
     p = str(phone).strip()
@@ -68,6 +65,7 @@ def clean_phone(phone):
     if not p.startswith('0') and len(p) > 5: p = '0' + p
     return p
 
+# ফাইল আপলোড
 st.markdown('<p class="upload-label">ওয়েবসাইটের এক্সেল ফাইলটি আপলোড করুন</p>', unsafe_allow_html=True)
 uploaded_file = st.file_uploader("", type=['xlsx', 'csv'], label_visibility="collapsed")
 
@@ -84,20 +82,25 @@ if uploaded_file:
         
         for order_id, group in grouped:
             first_row = group.iloc[0]
+            
+            # কাস্টমার ডাটা
             first_n = str(first_row.get('First Name (Billing)', '')).strip()
             last_n = str(first_row.get('Last Name (Billing)', '')).strip()
             full_name = f"{first_n} {last_n}".strip()
             phone_num = clean_phone(first_row.get('Phone (Billing)', ''))
             
+            # ডিসকাউন্ট অ্যামাউন্ট নেওয়া (Cart Discount Amount কলাম থেকে)
+            discount_val = first_row.get('Cart Discount Amount', 0)
+
             row_dict = {
                 "Name": full_name,
                 "Contact Number": phone_num,
                 "Address": first_row.get('Address 1&2 (Billing)', ''),
                 "District": first_row.get('City (Billing)', ''),
                 "Sub District": "",
-                "Total Amount": "", 
+                "Total Amount": "", # খালি রাখা হয়েছে আপনার অটোমেশনের জন্য
                 "Shipping Charge": first_row.get('Order Shipping Amount', 0),
-                "Discount": first_row.get('Cart Discount Amount', 0),
+                "Discount": discount_val, # ওয়েবসাইট থেকে ডিসকাউন্ট ডাটা বসবে
                 "Invoice ID": order_id,
                 "Order Collector": "",
                 "Source": "Website Bigganbaksho.com",
