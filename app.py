@@ -3,7 +3,7 @@ import pandas as pd
 import io
 import os
 
-# লোগো ফাইলের নাম চেক করা (ব্রাউজার আইকনের জন্য)
+# লোগো ফাইলের নাম চেক করা
 logo_path = "logo.jpg"
 if not os.path.exists(logo_path):
     logo_path = "images (1).jpeg"
@@ -17,46 +17,47 @@ st.set_page_config(
     page_icon=logo_path if os.path.exists(logo_path) else "🚀"
 )
 
-# ২. CSS দিয়ে প্রফেশনাল ডিজাইন (বোল্ড কমলা টাইটেল ও স্পেসিং)
+# ২. CSS দিয়ে প্রফেশনাল ডিজাইন (বিশাল বড় বোল্ড কমলা টাইটেল)
 st.markdown("""
     <style>
-    /* মেইন টাইটেল - বড়, বোল্ড এবং কমলা রঙ */
+    /* মেইন টাইটেল - ২য় ছবির মতো বিশাল বড় এবং বোল্ড */
     .main-title { 
         text-align: center; 
-        color: #FF6600; /* বিজ্ঞানবাক্স ব্র্যান্ড কালার */
-        font-size: 80px; 
-        font-weight: 800; 
+        color: #FF6600; /* ব্র্যান্ড কালার কমলা */
+        font-size: 95px; /* টাইটেল অনেক বড় করা হয়েছে */
+        font-weight: 900; /* একদম বোল্ড */
         margin-bottom: 0px; 
-        margin-top: -100px; 
-        word-spacing: 15px; /* শব্দের মাঝে ফাঁকা */
-        letter-spacing: 1px;
-        line-height: 1.2;
+        margin-top: -110px; /* লোগোর কাছাকাছি তোলার জন্য */
+        word-spacing: 25px; /* শব্দের মাঝে স্পষ্ট ফাঁকা */
+        letter-spacing: -1px;
+        line-height: 1;
+        font-family: 'Arial Black', sans-serif;
     }
     /* ডেভেলপার টেক্সট - ইটালিক */
     .developer-text { 
         text-align: center; 
         font-style: italic; 
-        font-size: 18px; 
+        font-size: 20px; 
         color: #555; 
-        margin-top: 5px; 
+        margin-top: 10px; 
     }
     /* স্লোগান - বোল্ড কালো */
     .slogan-text { 
         text-align: center; 
-        font-size: 32px; 
-        font-weight: 700; 
+        font-size: 34px; 
+        font-weight: 800; 
         color: #000; 
-        margin-top: 40px; 
+        margin-top: 45px; 
     }
     /* ভিশন টেক্সট */
     .vision-text { 
         text-align: center; 
-        font-size: 22px; 
+        font-size: 24px; 
         color: #444; 
         margin-bottom: 40px; 
     }
     .upload-label { 
-        font-size: 20px; 
+        font-size: 22px; 
         font-weight: bold; 
         color: #333;
         margin-bottom: 10px; 
@@ -130,13 +131,13 @@ if uploaded_file:
             full_name = f"{first_n} {last_n}".strip()
             phone_num = clean_phone(first_row.get('Phone (Billing)', ''))
             
-            # ডিসকাউন্ট ০ হলে ফাকা রাখা হবে
+            # ডিসকাউন্ট ০ হলে বা ডাটা না থাকলে পুরোপুরি ফাকা রাখা হবে
             discount_val = first_row.get('Cart Discount Amount', "")
             try:
-                if float(discount_val) == 0:
+                if discount_val == "" or float(discount_val) == 0:
                     discount_val = ""
             except:
-                pass
+                discount_val = ""
 
             row_dict = {
                 "Name": full_name,
