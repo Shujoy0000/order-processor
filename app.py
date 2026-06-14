@@ -3,54 +3,80 @@ import pandas as pd
 import io
 import os
 
-# লোগো ফাইলের নাম চেক করা
+# লোগো ফাইলের নাম চেক করা (ব্রাউজার আইকনের জন্য)
 logo_path = "logo.jpg"
 if not os.path.exists(logo_path):
     logo_path = "images (1).jpeg"
 if not os.path.exists(logo_path):
     logo_path = "logo.png"
 
-# ১. পেজ সেটিংস (ব্রাউজার আইকন হিসেবে লোগো)
+# ১. পেজ সেটিংস
 st.set_page_config(
     page_title="Bigganbaksho Order Converter", 
     layout="wide", 
     page_icon=logo_path if os.path.exists(logo_path) else "🚀"
 )
 
-# ২. CSS দিয়ে ডিজাইন (টাইটেল বিশাল বড় এবং শব্দগুলোর মাঝে স্পেস ঠিক করা)
+# ২. CSS দিয়ে প্রফেশনাল ডিজাইন (বোল্ড কমলা টাইটেল ও স্পেসিং)
 st.markdown("""
     <style>
+    /* মেইন টাইটেল - বড়, বোল্ড এবং কমলা রঙ */
     .main-title { 
         text-align: center; 
-        color: #FF6600; 
-        font-size: 90px; /* আরও বড় করা হয়েছে */
-        font-weight: 900; 
+        color: #FF6600; /* বিজ্ঞানবাক্স ব্র্যান্ড কালার */
+        font-size: 80px; 
+        font-weight: 800; 
         margin-bottom: 0px; 
         margin-top: -100px; 
-        letter-spacing: 2px; /* অক্ষরের মাঝে সামান্য ফাঁকা */
-        word-spacing: 20px; /* শব্দের মাঝে স্পষ্ট ফাঁকা */
-        line-height: 1.1;
+        word-spacing: 15px; /* শব্দের মাঝে ফাঁকা */
+        letter-spacing: 1px;
+        line-height: 1.2;
     }
-    .developer-text { text-align: center; font-style: italic; font-size: 20px; color: #555; margin-top: 5px; }
-    .slogan-text { text-align: center; font-size: 32px; font-weight: bold; color: #333; margin-top: 35px; }
-    .vision-text { text-align: center; font-size: 20px; color: #666; margin-bottom: 30px; }
-    .upload-label { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
+    /* ডেভেলপার টেক্সট - ইটালিক */
+    .developer-text { 
+        text-align: center; 
+        font-style: italic; 
+        font-size: 18px; 
+        color: #555; 
+        margin-top: 5px; 
+    }
+    /* স্লোগান - বোল্ড কালো */
+    .slogan-text { 
+        text-align: center; 
+        font-size: 32px; 
+        font-weight: 700; 
+        color: #000; 
+        margin-top: 40px; 
+    }
+    /* ভিশন টেক্সট */
+    .vision-text { 
+        text-align: center; 
+        font-size: 22px; 
+        color: #444; 
+        margin-bottom: 40px; 
+    }
+    .upload-label { 
+        font-size: 20px; 
+        font-weight: bold; 
+        color: #333;
+        margin-bottom: 10px; 
+    }
     </style>
     """, unsafe_allow_html=True)
 
-# ৩. লোগো প্রদর্শন (বাম পাশের উপরে)
+# ৩. লোগো প্রদর্শন (উপরে বামে)
 if os.path.exists(logo_path):
     st.image(logo_path, width=130)
 
-# ৪. টেক্সট অংশ
-st.markdown('<h1 class="main-title">Bigganbaksho Order Converter</h1>', unsafe_allow_html=True)
+# ৪. টেক্সট সেকশন
+st.markdown('<p class="main-title">Bigganbaksho Order Converter</p>', unsafe_allow_html=True)
 st.markdown('<p class="developer-text">Web App Developed By-Shujoy Shaha</p>', unsafe_allow_html=True)
 st.markdown('<p class="slogan-text">ম্যানুয়েল কাজের দিন শেষ, বিজ্ঞানবাক্সে বাংলাদেশ</p>', unsafe_allow_html=True)
 st.markdown('<p class="vision-text">অন্যরকম বাংলাদেশের স্বপ্ন নিয়ে</p>', unsafe_allow_html=True)
 
 st.markdown("---")
 
-# ৫. প্রোডাক্ট ম্যাপিং
+# ৫. প্রোডাক্ট ম্যাপিং লিস্ট
 MAPPING = {
     "আলোর ঝলক": "ALOR JHALAK",
     "চুম্বকের চমক": "CHUMBAKER CHAMAK",
@@ -104,7 +130,7 @@ if uploaded_file:
             full_name = f"{first_n} {last_n}".strip()
             phone_num = clean_phone(first_row.get('Phone (Billing)', ''))
             
-            # ডিসকাউন্ট লজিক (০ হলে খালি রাখা হবে)
+            # ডিসকাউন্ট ০ হলে ফাকা রাখা হবে
             discount_val = first_row.get('Cart Discount Amount', "")
             try:
                 if float(discount_val) == 0:
