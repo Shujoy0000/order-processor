@@ -6,7 +6,7 @@ import os
 # পেজ সেটিংস
 st.set_page_config(page_title="Bigganbaksho Order Converter", layout="wide", page_icon="🚀")
 
-# CSS দিয়ে স্টাইল ঠিক করা (সেন্টার অ্যালাইনমেন্ট)
+# CSS দিয়ে স্টাইল ঠিক করা
 st.markdown("""
     <style>
     .main-title { text-align: center; color: #FF6600; font-size: 45px; font-weight: bold; margin-bottom: 0px; }
@@ -15,13 +15,12 @@ st.markdown("""
     .vision-text { text-align: center; font-size: 18px; color: #666; margin-bottom: 30px; }
     .upload-label { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
     </style>
-    """, unsafe_allow_code=True)
+    """, unsafe_allow_html=True)
 
-# লোগো প্রদর্শন (সেন্টার করার জন্য ৩টি কলাম ব্যবহার)
+# লোগো প্রদর্শন (আপনার আপলোড করা ফাইলের নাম এখানে যোগ করা হয়েছে)
 col1, col2, col3 = st.columns([2, 1, 2])
 with col2:
-    # কমন সব লোগো ফরম্যাট চেক করা
-    logo_files = ["logo.png", "logo.jpg", "logo.jpeg", "Logo.png", "Logo.jpg"]
+    logo_files = ["logo.png", "logo.jpg", "logo.jpeg", "images (1).jpeg", "Logo.png"]
     found_logo = False
     for f in logo_files:
         if os.path.exists(f):
@@ -30,14 +29,14 @@ with col2:
             break
 
 # টেক্সট অংশ
-st.markdown('<p class="main-title">Bigganbaksho Order Converter</p>', unsafe_allow_code=True)
-st.markdown('<p class="developer-text">Web App Developed By-Shujoy Shaha</p>', unsafe_allow_code=True)
-st.markdown('<p class="slogan-text">ম্যানুয়েল কাজের দিন শেষ, বিজ্ঞানবাক্সে বাংলাদেশ</p>', unsafe_allow_code=True)
-st.markdown('<p class="vision-text">অন্যরকম বাংলাদেশের স্বপ্ন নিয়ে</p>', unsafe_allow_code=True)
+st.markdown('<p class="main-title">Bigganbaksho Order Converter</p>', unsafe_allow_html=True)
+st.markdown('<p class="developer-text">Web App Developed By-Shujoy Shaha</p>', unsafe_allow_html=True)
+st.markdown('<p class="slogan-text">ম্যানুয়েল কাজের দিন শেষ, বিজ্ঞানবাক্সে বাংলাদেশ</p>', unsafe_allow_html=True)
+st.markdown('<p class="vision-text">অন্যরকম বাংলাদেশের স্বপ্ন নিয়ে</p>', unsafe_allow_html=True)
 
-st.markdown("---") # একটি দাগ দেওয়া হলো সৌন্দর্য বাড়াতে
+st.markdown("---")
 
-# ১. প্রোডাক্ট ম্যাপিং ডিকশনারি
+# ১. প্রোডাক্ট ম্যাপিং
 MAPPING = {
     "আলোর ঝলক": "ALOR JHALAK",
     "চুম্বকের চমক": "CHUMBAKER CHAMAK",
@@ -60,7 +59,6 @@ MAPPING = {
     "Power Of Personality": "Power Of Personality"
 }
 
-# ফোন নম্বর ঠিক করার ফাংশন
 def clean_phone(phone):
     if not phone: return ""
     p = str(phone).strip()
@@ -70,8 +68,7 @@ def clean_phone(phone):
     if not p.startswith('0') and len(p) > 5: p = '0' + p
     return p
 
-# ফাইল আপলোড সেকশন
-st.markdown('<p class="upload-label">ওয়েবসাইটের এক্সেল ফাইলটি আপলোড করুন</p>', unsafe_allow_code=True)
+st.markdown('<p class="upload-label">ওয়েবসাইটের এক্সেল ফাইলটি আপলোড করুন</p>', unsafe_allow_html=True)
 uploaded_file = st.file_uploader("", type=['xlsx', 'csv'], label_visibility="collapsed")
 
 if uploaded_file:
