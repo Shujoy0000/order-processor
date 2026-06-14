@@ -3,20 +3,39 @@ import pandas as pd
 import io
 import os
 
+# পেজ সেটিংস
 st.set_page_config(page_title="Bigganbaksho Order Converter", layout="wide", page_icon="🚀")
 
-# বিজ্ঞানবাক্স লোগো এবং টাইটেল
-col1, col2 = st.columns([1, 6])
-with col1:
-    # যদি logo.png ফোল্ডারে থাকে তবে দেখাবে, নয়তো টেক্সট দেখাবে
-    if os.path.exists("logo.png"):
-        st.image("logo.png", width=120)
-with col2:
-    st.title("Bigganbaksho Order Converter (Web App Developed By-Shujoy Shaha)")
+# CSS দিয়ে স্টাইল ঠিক করা (সেন্টার অ্যালাইনমেন্ট)
+st.markdown("""
+    <style>
+    .main-title { text-align: center; color: #FF6600; font-size: 45px; font-weight: bold; margin-bottom: 0px; }
+    .developer-text { text-align: center; font-style: italic; font-size: 16px; color: #555; margin-top: 0px; }
+    .slogan-text { text-align: center; font-size: 28px; font-weight: bold; color: #333; margin-top: 20px; }
+    .vision-text { text-align: center; font-size: 18px; color: #666; margin-bottom: 30px; }
+    .upload-label { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+    </style>
+    """, unsafe_allow_code=True)
 
-# আপনার দেওয়া স্লোগান ও সাবটাইটেল
-st.markdown("### ম্যানুয়েল কাজের দিন শেষ, বিজ্ঞানবাক্সে বাংলাদেশ")
-st.write("অন্যরকম বাংলাদেশের স্বপ্ন নিয়ে")
+# লোগো প্রদর্শন (সেন্টার করার জন্য ৩টি কলাম ব্যবহার)
+col1, col2, col3 = st.columns([2, 1, 2])
+with col2:
+    # কমন সব লোগো ফরম্যাট চেক করা
+    logo_files = ["logo.png", "logo.jpg", "logo.jpeg", "Logo.png", "Logo.jpg"]
+    found_logo = False
+    for f in logo_files:
+        if os.path.exists(f):
+            st.image(f, width=150)
+            found_logo = True
+            break
+
+# টেক্সট অংশ
+st.markdown('<p class="main-title">Bigganbaksho Order Converter</p>', unsafe_allow_code=True)
+st.markdown('<p class="developer-text">Web App Developed By-Shujoy Shaha</p>', unsafe_allow_code=True)
+st.markdown('<p class="slogan-text">ম্যানুয়েল কাজের দিন শেষ, বিজ্ঞানবাক্সে বাংলাদেশ</p>', unsafe_allow_code=True)
+st.markdown('<p class="vision-text">অন্যরকম বাংলাদেশের স্বপ্ন নিয়ে</p>', unsafe_allow_code=True)
+
+st.markdown("---") # একটি দাগ দেওয়া হলো সৌন্দর্য বাড়াতে
 
 # ১. প্রোডাক্ট ম্যাপিং ডিকশনারি
 MAPPING = {
@@ -52,7 +71,8 @@ def clean_phone(phone):
     return p
 
 # ফাইল আপলোড সেকশন
-uploaded_file = st.file_uploader("ওয়েবসাইটের এক্সেল ফাইলটি আপলোড করুন", type=['xlsx', 'csv'])
+st.markdown('<p class="upload-label">ওয়েবসাইটের এক্সেল ফাইলটি আপলোড করুন</p>', unsafe_allow_code=True)
+uploaded_file = st.file_uploader("", type=['xlsx', 'csv'], label_visibility="collapsed")
 
 if uploaded_file:
     try:
@@ -67,8 +87,6 @@ if uploaded_file:
         
         for order_id, group in grouped:
             first_row = group.iloc[0]
-            
-            # নাম ও ফোন প্রসেসিং
             first_n = str(first_row.get('First Name (Billing)', '')).strip()
             last_n = str(first_row.get('Last Name (Billing)', '')).strip()
             full_name = f"{first_n} {last_n}".strip()
