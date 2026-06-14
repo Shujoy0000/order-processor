@@ -17,6 +17,7 @@ MAPPING = {
     "ট্যানগ্রাম": "MAGNETIC TANGRAM",
     "পঞ্চম শ্রেণি": "CLASS FIVE Kit",
     "ফোকাস চ্যালেঞ্জ": "FOCUS CHALLENGE- BANGLA VERSION",
+    "ফোকাস চ্যালেঞ্জ কিট": "FOCUS CHALLENGE- BANGLA VERSION",
     "মজার পেরিস্কোপ": "MOJAR PERISCOPE",
     "Mystery of Chemistry": "MYSTERY OF CHEMISTRY",
     "Amazing Electricity": "AMAZING ELECTRICITY",
