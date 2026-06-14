@@ -3,37 +3,38 @@ import pandas as pd
 import io
 import os
 
-# লোগো ফাইলের নাম আগে থেকেই চেক করা (Page Icon এর জন্য)
+# লোগো ফাইলের নাম চেক করা
 logo_path = "logo.jpg"
 if not os.path.exists(logo_path):
     logo_path = "images (1).jpeg"
 if not os.path.exists(logo_path):
     logo_path = "logo.png"
 
-# ১. পেজ সেটিংস (ব্রাউজার আইকন হিসেবে লোগো সেট করা)
+# ১. পেজ সেটিংস (ব্রাউজার আইকন হিসেবে লোগো)
 st.set_page_config(
     page_title="Bigganbaksho Order Converter", 
     layout="wide", 
     page_icon=logo_path if os.path.exists(logo_path) else "🚀"
 )
 
-# ২. CSS দিয়ে ডিজাইন (টাইটেল অনেক বড় এবং লোগো বামে)
+# ২. CSS দিয়ে ডিজাইন (টাইটেল বিশাল বড় এবং শব্দগুলোর মাঝে স্পেস ঠিক করা)
 st.markdown("""
     <style>
-    /* টাইটেল অনেক বড় করা হয়েছে */
     .main-title { 
         text-align: center; 
         color: #FF6600; 
-        font-size: 75px; 
+        font-size: 90px; /* আরও বড় করা হয়েছে */
         font-weight: 900; 
         margin-bottom: 0px; 
-        margin-top: -90px; 
-        letter-spacing: -2px;
+        margin-top: -100px; 
+        letter-spacing: 2px; /* অক্ষরের মাঝে সামান্য ফাঁকা */
+        word-spacing: 20px; /* শব্দের মাঝে স্পষ্ট ফাঁকা */
+        line-height: 1.1;
     }
-    .developer-text { text-align: center; font-style: italic; font-size: 18px; color: #555; margin-top: 0px; }
-    .slogan-text { text-align: center; font-size: 32px; font-weight: bold; color: #333; margin-top: 30px; }
+    .developer-text { text-align: center; font-style: italic; font-size: 20px; color: #555; margin-top: 5px; }
+    .slogan-text { text-align: center; font-size: 32px; font-weight: bold; color: #333; margin-top: 35px; }
     .vision-text { text-align: center; font-size: 20px; color: #666; margin-bottom: 30px; }
-    .upload-label { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
+    .upload-label { font-size: 20px; font-weight: bold; margin-bottom: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -42,7 +43,7 @@ if os.path.exists(logo_path):
     st.image(logo_path, width=130)
 
 # ৪. টেক্সট অংশ
-st.markdown('<p class="main-title">Bigganbaksho Order Converter</p>', unsafe_allow_html=True)
+st.markdown('<h1 class="main-title">Bigganbaksho Order Converter</h1>', unsafe_allow_html=True)
 st.markdown('<p class="developer-text">Web App Developed By-Shujoy Shaha</p>', unsafe_allow_html=True)
 st.markdown('<p class="slogan-text">ম্যানুয়েল কাজের দিন শেষ, বিজ্ঞানবাক্সে বাংলাদেশ</p>', unsafe_allow_html=True)
 st.markdown('<p class="vision-text">অন্যরকম বাংলাদেশের স্বপ্ন নিয়ে</p>', unsafe_allow_html=True)
@@ -102,7 +103,14 @@ if uploaded_file:
             last_n = str(first_row.get('Last Name (Billing)', '')).strip()
             full_name = f"{first_n} {last_n}".strip()
             phone_num = clean_phone(first_row.get('Phone (Billing)', ''))
-            discount_val = first_row.get('Cart Discount Amount', 0)
+            
+            # ডিসকাউন্ট লজিক (০ হলে খালি রাখা হবে)
+            discount_val = first_row.get('Cart Discount Amount', "")
+            try:
+                if float(discount_val) == 0:
+                    discount_val = ""
+            except:
+                pass
 
             row_dict = {
                 "Name": full_name,
