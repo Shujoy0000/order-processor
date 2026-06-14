@@ -3,28 +3,45 @@ import pandas as pd
 import io
 import os
 
-# পেজ সেটিংস
-st.set_page_config(page_title="Bigganbaksho Order Converter", layout="wide", page_icon="🚀")
+# লোগো ফাইলের নাম আগে থেকেই চেক করা (Page Icon এর জন্য)
+logo_path = "logo.jpg"
+if not os.path.exists(logo_path):
+    logo_path = "images (1).jpeg"
+if not os.path.exists(logo_path):
+    logo_path = "logo.png"
 
-# কাস্টম CSS (লোগো বামে এবং টেক্সট সেন্টারে বড় করে)
+# ১. পেজ সেটিংস (ব্রাউজার আইকন হিসেবে লোগো সেট করা)
+st.set_page_config(
+    page_title="Bigganbaksho Order Converter", 
+    layout="wide", 
+    page_icon=logo_path if os.path.exists(logo_path) else "🚀"
+)
+
+# ২. CSS দিয়ে ডিজাইন (টাইটেল অনেক বড় এবং লোগো বামে)
 st.markdown("""
     <style>
-    .main-title { text-align: center; color: #FF6600; font-size: 55px; font-weight: bold; margin-bottom: 5px; margin-top: -60px; }
+    /* টাইটেল অনেক বড় করা হয়েছে */
+    .main-title { 
+        text-align: center; 
+        color: #FF6600; 
+        font-size: 75px; 
+        font-weight: 900; 
+        margin-bottom: 0px; 
+        margin-top: -90px; 
+        letter-spacing: -2px;
+    }
     .developer-text { text-align: center; font-style: italic; font-size: 18px; color: #555; margin-top: 0px; }
-    .slogan-text { text-align: center; font-size: 30px; font-weight: bold; color: #333; margin-top: 25px; }
+    .slogan-text { text-align: center; font-size: 32px; font-weight: bold; color: #333; margin-top: 30px; }
     .vision-text { text-align: center; font-size: 20px; color: #666; margin-bottom: 30px; }
     .upload-label { font-size: 18px; font-weight: bold; margin-bottom: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-# লোগো প্রদর্শন (একদম উপরে বামে)
-logo_files = ["logo.png", "logo.jpg", "logo.jpeg", "images (1).jpeg", "Logo.png"]
-for f in logo_files:
-    if os.path.exists(f):
-        st.image(f, width=130)
-        break
+# ৩. লোগো প্রদর্শন (বাম পাশের উপরে)
+if os.path.exists(logo_path):
+    st.image(logo_path, width=130)
 
-# টেক্সট অংশ
+# ৪. টেক্সট অংশ
 st.markdown('<p class="main-title">Bigganbaksho Order Converter</p>', unsafe_allow_html=True)
 st.markdown('<p class="developer-text">Web App Developed By-Shujoy Shaha</p>', unsafe_allow_html=True)
 st.markdown('<p class="slogan-text">ম্যানুয়েল কাজের দিন শেষ, বিজ্ঞানবাক্সে বাংলাদেশ</p>', unsafe_allow_html=True)
@@ -32,7 +49,7 @@ st.markdown('<p class="vision-text">অন্যরকম বাংলাদে�
 
 st.markdown("---")
 
-# ১. প্রোডাক্ট ম্যাপিং
+# ৫. প্রোডাক্ট ম্যাপিং
 MAPPING = {
     "আলোর ঝলক": "ALOR JHALAK",
     "চুম্বকের চমক": "CHUMBAKER CHAMAK",
@@ -55,7 +72,6 @@ MAPPING = {
     "Power Of Personality": "Power Of Personality"
 }
 
-# ফোন নম্বর ঠিক করার ফাংশন
 def clean_phone(phone):
     if not phone: return ""
     p = str(phone).strip()
@@ -65,7 +81,7 @@ def clean_phone(phone):
     if not p.startswith('0') and len(p) > 5: p = '0' + p
     return p
 
-# ফাইল আপলোড
+# ৬. ফাইল আপলোড অংশ
 st.markdown('<p class="upload-label">ওয়েবসাইটের এক্সেল ফাইলটি আপলোড করুন</p>', unsafe_allow_html=True)
 uploaded_file = st.file_uploader("", type=['xlsx', 'csv'], label_visibility="collapsed")
 
@@ -82,14 +98,10 @@ if uploaded_file:
         
         for order_id, group in grouped:
             first_row = group.iloc[0]
-            
-            # কাস্টমার ডাটা
             first_n = str(first_row.get('First Name (Billing)', '')).strip()
             last_n = str(first_row.get('Last Name (Billing)', '')).strip()
             full_name = f"{first_n} {last_n}".strip()
             phone_num = clean_phone(first_row.get('Phone (Billing)', ''))
-            
-            # ডিসকাউন্ট অ্যামাউন্ট নেওয়া (Cart Discount Amount কলাম থেকে)
             discount_val = first_row.get('Cart Discount Amount', 0)
 
             row_dict = {
@@ -98,9 +110,9 @@ if uploaded_file:
                 "Address": first_row.get('Address 1&2 (Billing)', ''),
                 "District": first_row.get('City (Billing)', ''),
                 "Sub District": "",
-                "Total Amount": "", # খালি রাখা হয়েছে আপনার অটোমেশনের জন্য
+                "Total Amount": "", 
                 "Shipping Charge": first_row.get('Order Shipping Amount', 0),
-                "Discount": discount_val, # ওয়েবসাইট থেকে ডিসকাউন্ট ডাটা বসবে
+                "Discount": discount_val,
                 "Invoice ID": order_id,
                 "Order Collector": "",
                 "Source": "Website Bigganbaksho.com",
