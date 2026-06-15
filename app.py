@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import io
 import os
+import re
 
 # লোগো ফাইলের নাম চেক করা
 logo_path = "logo.jpg"
@@ -17,62 +18,35 @@ st.set_page_config(
     page_icon=logo_path if os.path.exists(logo_path) else "🚀"
 )
 
-# ২. CSS ডিজাইন (বিশাল বড় বোল্ড কমলা টাইটেল)
+# ২. CSS ডিজাইন
 st.markdown("""
     <style>
-    .main-title { 
-        text-align: center; 
-        color: #FF6600; 
-        font-size: 65px; 
-        font-weight: 800; 
-        margin-top: -100px; 
-        margin-bottom: 15px; 
-        line-height: 1.1;
-        font-family: 'Source Sans Pro', sans-serif;
-    }
-    .developer-text { 
-        text-align: center; 
-        font-style: italic; 
-        font-size: 19px; 
-        color: #555; 
-        margin-top: 0px; 
-        margin-bottom: 25px;
-    }
-    .slogan-text { 
-        text-align: center; 
-        font-size: 32px; 
-        font-weight: 800; 
-        color: #000; 
-        margin-top: 20px; 
-    }
-    .vision-text { 
-        text-align: center; 
-        font-size: 22px; 
-        color: #444; 
-        margin-bottom: 40px; 
-    }
-    .upload-label { 
-        font-size: 20px; 
-        font-weight: bold; 
-        color: #333;
-        margin-bottom: 10px; 
-    }
+    .main-title { text-align: center; color: #FF6600; font-size: 65px; font-weight: 800; margin-top: -100px; margin-bottom: 15px; line-height: 1.1; }
+    .developer-text { text-align: center; font-style: italic; font-size: 19px; color: #555; }
+    .slogan-text { text-align: center; font-size: 32px; font-weight: 800; color: #000; margin-top: 20px; }
+    .vision-text { text-align: center; font-size: 22px; color: #444; margin-bottom: 40px; }
+    .upload-label { font-size: 20px; font-weight: bold; color: #333; margin-bottom: 10px; }
     </style>
     """, unsafe_allow_html=True)
 
-# ৩. লোগো প্রদর্শন
 if os.path.exists(logo_path):
     st.image(logo_path, width=130)
 
-# ৪. টেক্সট সেকশন
 st.markdown('<div class="main-title">Bigganbaksho Order Converter</div>', unsafe_allow_html=True)
 st.markdown('<div class="developer-text">Web App Developed By-Shujoy Shaha</div>', unsafe_allow_html=True)
 st.markdown('<div class="slogan-text">ম্যানুয়েল কাজের দিন শেষ, বিজ্ঞানবাক্সে বাংলাদেশ</div>', unsafe_allow_html=True)
 st.markdown('<div class="vision-text">অন্যরকম বাংলাদেশের স্বপ্ন নিয়ে</div>', unsafe_allow_html=True)
-
 st.markdown("---")
 
-# ৫. প্রোডাক্ট ম্যাপিং লিস্ট
+# ৩. ডাটা ক্লিন করার ফাংশন (অদৃশ্য ক্যারেক্টার রিমুভ করার জন্য)
+def normalize_text(text):
+    if not text: return ""
+    text = str(text).strip()
+    # অদৃশ্য ক্যারেক্টার এবং অতিরিক্ত স্পেস রিমুভ করা
+    text = re.sub(r'[\u200b-\u200d\uFEFF]', '', text)
+    return text
+
+# ৪. প্রোডাক্ট ম্যাপিং লিস্ট
 MAPPING = {
     "আলোর ঝলক": "ALOR JHALAK",
     "চুম্বকের চমক": "CHUMBAKER CHAMAK",
@@ -95,6 +69,13 @@ MAPPING = {
     "Power Of Personality": "Power Of Personality"
 }
 
+# বান্ডেল বা প্যাকেজ লিস্ট
+BUNDLES = {
+    "ব্রেইন ডেভেলপমেন্ট প্যাকেজ": ["MAGNETIC TANGRAM", "FOCUS CHALLENGE- BANGLA VERSION", "Brain Booster"],
+    "Little Genius Package": ["CHUMBAKER CHAMAK", "MOHAKASHER JAGAT", "MOJAR PERISCOPE"],
+    "জুনিয়র সায়েন্টিস্ট প্যাকেজ": ["ALOR JHALAK", "CHUMBAKER CHAMAK", "TARIT TANDOB", "RASHAYON RAHOSSHO", "ODVUT MAPJOKH"]
+}
+
 def clean_phone(phone):
     if not phone: return ""
     p = str(phone).strip()
@@ -104,7 +85,6 @@ def clean_phone(phone):
     if not p.startswith('0') and len(p) > 5: p = '0' + p
     return p
 
-# ৬. ফাইল আপলোড অংশ
 st.markdown('<p class="upload-label">ওয়েবসাইটের এক্সেল ফাইলটি আপলোড করুন</p>', unsafe_allow_html=True)
 uploaded_file = st.file_uploader("", type=['xlsx', 'csv'], label_visibility="collapsed")
 
@@ -121,69 +101,48 @@ if uploaded_file:
         
         for order_id, group in grouped:
             first_row = group.iloc[0]
-            first_n = str(first_row.get('First Name (Billing)', '')).strip()
-            last_n = str(first_row.get('Last Name (Billing)', '')).strip()
+            first_n = normalize_text(first_row.get('First Name (Billing)', ''))
+            last_n = normalize_text(first_row.get('Last Name (Billing)', ''))
             full_name = f"{first_n} {last_n}".strip()
             phone_num = clean_phone(first_row.get('Phone (Billing)', ''))
             
-            # ডিসকাউন্ট লজিক
             discount_val = first_row.get('Cart Discount Amount', "")
             try:
-                if discount_val == "" or float(discount_val) == 0:
-                    discount_val = ""
-            except:
-                discount_val = ""
+                if discount_val == "" or float(discount_val) == 0: discount_val = ""
+            except: discount_val = ""
 
             row_dict = {
-                "Name": full_name,
-                "Contact Number": phone_num,
+                "Name": full_name, "Contact Number": phone_num,
                 "Address": first_row.get('Address 1&2 (Billing)', ''),
                 "District": first_row.get('City (Billing)', ''),
-                "Sub District": "",
-                "Total Amount": "", 
+                "Sub District": "", "Total Amount": "", 
                 "Shipping Charge": first_row.get('Order Shipping Amount', 0),
-                "Discount": discount_val,
-                "Invoice ID": order_id,
-                "Order Collector": "",
-                "Source": "Website Bigganbaksho.com",
+                "Discount": discount_val, "Invoice ID": order_id,
+                "Order Collector": "", "Source": "Website Bigganbaksho.com",
                 "AD ID": first_row.get('Customer Note', ''),
                 "Profession": "", "Class": "", "Age": "", "User Name": "", "Birth Date": ""
             }
             
             slot = 1
             for _, item in group.iterrows():
-                raw_name = str(item.get('Item Name', '')).replace('- additional', '').strip()
+                raw_name = normalize_text(item.get('Item Name', '')).replace('- additional', '').strip()
                 qty = item.get('Quantity (- Refund)', 0)
 
-                # বিশেষ প্যাকেজ হ্যান্ডলিং
-                if raw_name == "ব্রেইন ডেভেলপメント প্যাকেজ":
-                    bundle = ["MAGNETIC TANGRAM", "FOCUS CHALLENGE- BANGLA VERSION", "Brain Booster"]
-                    for b_name in bundle:
-                        if slot <= 15:
-                            row_dict[f"Product Name-{slot}"] = b_name
-                            row_dict[f"Product Price-{slot}"] = ""
-                            row_dict[f"Product QTY-{slot}"] = qty
-                            slot += 1
+                is_bundle = False
+                # প্যাকেজ চেক করার জন্য লুপ
+                for bundle_name, items in BUNDLES.items():
+                    # শক্তিশালী চেকিং: bundle_name যদি raw_name এর ভেতর থাকে
+                    if bundle_name in raw_name or raw_name in bundle_name:
+                        is_bundle = True
+                        for b_item in items:
+                            if slot <= 15:
+                                row_dict[f"Product Name-{slot}"] = b_name
+                                row_dict[f"Product Price-{slot}"] = ""
+                                row_dict[f"Product QTY-{slot}"] = qty
+                                slot += 1
+                        break # এই আইটেমটি প্যাকেজ হিসেবে প্রসেস হয়েছে
                 
-                elif raw_name == "Little Genius Package":
-                    bundle = ["CHUMBAKER CHAMAK", "MOHAKASHER JAGAT", "MOJAR PERISCOPE"]
-                    for b_name in bundle:
-                        if slot <= 15:
-                            row_dict[f"Product Name-{slot}"] = b_name
-                            row_dict[f"Product Price-{slot}"] = ""
-                            row_dict[f"Product QTY-{slot}"] = qty
-                            slot += 1
-
-                elif raw_name == "জুনিয়র সায়েন্টিস্ট প্যাকেজ":
-                    bundle = ["ALOR JHALAK", "CHUMBAKER CHAMAK", "TARIT TANDOB", "RASHAYON RAHOSSHO", "ODVUT MAPJOKH"]
-                    for b_name in bundle:
-                        if slot <= 15:
-                            row_dict[f"Product Name-{slot}"] = b_name
-                            row_dict[f"Product Price-{slot}"] = ""
-                            row_dict[f"Product QTY-{slot}"] = qty
-                            slot += 1
-                
-                else:
+                if not is_bundle:
                     if slot <= 15:
                         final_name = MAPPING.get(raw_name, raw_name)
                         row_dict[f"Product Name-{slot}"] = final_name
@@ -216,14 +175,13 @@ if uploaded_file:
         
         result_df = pd.DataFrame(final_data).reindex(columns=output_columns, fill_value="")
         result_df.index = result_df.index + 1
-
         st.success(f"সফলভাবে {len(result_df)} টি অর্ডার প্রসেস করা হয়েছে!")
         st.dataframe(result_df)
 
         output = io.BytesIO()
         with pd.ExcelWriter(output, engine='xlsxwriter') as writer:
             result_df.to_excel(writer, index=False, sheet_name='Orders')
-            workbook  = writer.book
+            workbook = writer.book
             worksheet = writer.sheets['Orders']
             text_format = workbook.add_format({'num_format': '@'})
             worksheet.set_column('B:B', 20, text_format)
