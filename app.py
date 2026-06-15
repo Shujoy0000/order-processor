@@ -17,21 +17,19 @@ st.set_page_config(
     page_icon=logo_path if os.path.exists(logo_path) else "🚀"
 )
 
-# ২. CSS দিয়ে প্রফেশনাল ডিজাইন (২য় ছবির মতো বড় এবং বোল্ড)
+# ২. CSS ডিজাইন (বিশাল বড় বোল্ড কমলা টাইটেল)
 st.markdown("""
     <style>
-    /* মেইন টাইটেল - ২য় ছবির মতো বড় এবং বোল্ড */
     .main-title { 
         text-align: center; 
-        color: #FF6600; /* ব্র্যান্ড কালার কমলা */
-        font-size: 65px; /* ২য় ছবির ফন্ট সাইজের মতো বড় */
-        font-weight: 800; /* একদম বোল্ড */
-        margin-top: -100px; /* উপরে তোলার জন্য */
-        margin-bottom: 15px; /* ডেভেলপার টেক্সটের সাথে গ্যাপ */
+        color: #FF6600; 
+        font-size: 65px; 
+        font-weight: 800; 
+        margin-top: -100px; 
+        margin-bottom: 15px; 
         line-height: 1.1;
         font-family: 'Source Sans Pro', sans-serif;
     }
-    /* ডেভেলপার টেক্সট - ইটালিক এবং কিছুটা গ্যাপে */
     .developer-text { 
         text-align: center; 
         font-style: italic; 
@@ -40,7 +38,6 @@ st.markdown("""
         margin-top: 0px; 
         margin-bottom: 25px;
     }
-    /* স্লোগান - বোল্ড কালো */
     .slogan-text { 
         text-align: center; 
         font-size: 32px; 
@@ -48,7 +45,6 @@ st.markdown("""
         color: #000; 
         margin-top: 20px; 
     }
-    /* ভিশন টেক্সট */
     .vision-text { 
         text-align: center; 
         font-size: 22px; 
@@ -64,7 +60,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# ৩. লোগো প্রদর্শন (উপরে বামে)
+# ৩. লোগো প্রদর্শন
 if os.path.exists(logo_path):
     st.image(logo_path, width=130)
 
@@ -130,7 +126,7 @@ if uploaded_file:
             full_name = f"{first_n} {last_n}".strip()
             phone_num = clean_phone(first_row.get('Phone (Billing)', ''))
             
-            # ডিসকাউন্ট ০ হলে ফাকা রাখা হবে
+            # ডিসকাউন্ট লজিক
             discount_val = first_row.get('Cart Discount Amount', "")
             try:
                 if discount_val == "" or float(discount_val) == 0:
@@ -159,7 +155,8 @@ if uploaded_file:
                 raw_name = str(item.get('Item Name', '')).replace('- additional', '').strip()
                 qty = item.get('Quantity (- Refund)', 0)
 
-                if raw_name == "ব্রেইন ডেভেলপমেন্ট প্যাকেজ":
+                # বিশেষ প্যাকেজ হ্যান্ডলিং
+                if raw_name == "ব্রেইন ডেভেলপメント প্যাকেজ":
                     bundle = ["MAGNETIC TANGRAM", "FOCUS CHALLENGE- BANGLA VERSION", "Brain Booster"]
                     for b_name in bundle:
                         if slot <= 15:
@@ -167,6 +164,25 @@ if uploaded_file:
                             row_dict[f"Product Price-{slot}"] = ""
                             row_dict[f"Product QTY-{slot}"] = qty
                             slot += 1
+                
+                elif raw_name == "Little Genius Package":
+                    bundle = ["CHUMBAKER CHAMAK", "MOHAKASHER JAGAT", "MOJAR PERISCOPE"]
+                    for b_name in bundle:
+                        if slot <= 15:
+                            row_dict[f"Product Name-{slot}"] = b_name
+                            row_dict[f"Product Price-{slot}"] = ""
+                            row_dict[f"Product QTY-{slot}"] = qty
+                            slot += 1
+
+                elif raw_name == "জুনিয়র সায়েন্টিস্ট প্যাকেজ":
+                    bundle = ["ALOR JHALAK", "CHUMBAKER CHAMAK", "TARIT TANDOB", "RASHAYON RAHOSSHO", "ODVUT MAPJOKH"]
+                    for b_name in bundle:
+                        if slot <= 15:
+                            row_dict[f"Product Name-{slot}"] = b_name
+                            row_dict[f"Product Price-{slot}"] = ""
+                            row_dict[f"Product QTY-{slot}"] = qty
+                            slot += 1
+                
                 else:
                     if slot <= 15:
                         final_name = MAPPING.get(raw_name, raw_name)
